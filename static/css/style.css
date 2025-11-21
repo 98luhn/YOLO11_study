@@ -149,6 +149,20 @@ h6 { font-size: 1rem; }
     font-size: 2rem;
 }
 
+/* 로고 링크 스타일 */
+.nav-brand-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.2s ease;
+}
+
+.nav-brand-link:hover {
+    opacity: 0.8;
+}
+
 .nav-menu {
     display: flex;
     gap: var(--spacing-md);
