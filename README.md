@@ -4,7 +4,14 @@ YOLO11을 활용한 고급 객체 검출 시스템 - 기본 검출부터 파인�
 
 ## 🚀 프로젝트 개요
 
-이 프로젝트는 YOLO11(Ultralytics)을 기반으로 한 포괄적인 객체 검출 시스템입니다. 기본적인 객체 검출부터 시작하여 고급 기능, 그리고 사용자 맞춤형 파인튜닝까지 단계별로 구현되어 있습니다.
+이 프로젝트는 YOLO11(Ultralytics)을 기반으로 한 포괄적인 객체 검출 시스템입니다. 기본적인 객체 검출부터 시작하여 고급 기능, 파인튜닝, 그리고 **다중 레이어 객체 인식**까지 완벽하게 구현되어 있습니다.
+
+### 🆕 최신 기능: 다중 레이어 객체 검출
+여러 YOLO 모델을 계층적으로 사용하여 더 정밀하고 포괄적인 객체 검출을 수행합니다:
+- **Layer 1**: YOLOv11n으로 빠른 스캔
+- **Layer 2**: YOLOv11s로 일반 검출  
+- **Layer 3**: YOLOv11m으로 정밀 검출
+- **Layer 4**: YOLOv11-seg로 세그멘테이션
 
 ### 📊 성능 개선 결과
 파인튜닝을 통해 기본 YOLO11 대비 다음과 같은 성능 향상을 달성했습니다:
@@ -30,11 +37,17 @@ YOLO11을 활용한 고급 객체 검출 시스템 - 기본 검출부터 파인�
 - **세그멘테이션 지원**: YOLO11-seg 모델 통합
 - **성능 비교 도구**: 모델별 벤치마킹 및 리포트 생성
 
-### 3️⃣ Phase 3: 파인튜닝 시스템
+### 3️⃣ Phase 3: 파인튜닝 시스템 (`3rd/`)
 - **커스텀 데이터셋 학습**: COCO/Pascal VOC 형식 지원
 - **Active Learning**: 불확실한 샘플 자동 선별
 - **Online Fine-tuning**: 실시간 모델 업데이트
 - **모델 버전 관리**: 자동 버전 관리 및 롤백
+
+### 4️⃣ 다중 레이어 객체 검출 시스템
+- **계층적 검출**: 4개 레이어를 통한 단계별 정밀 검출
+- **GUI/CLI 지원**: 사용자 친화적 인터페이스
+- **통합 분석**: 모든 레이어 결과를 종합한 최적 검출
+- **시각화**: 레이어별 결과 비교 및 분석
 
 ## 🛠️ 설치 방법
 
@@ -114,7 +127,7 @@ pipeline.generate_report()
 
 ### 🤖 실시간 학습 시스템
 ```python
-from realtime_training_system import IntegratedLearningSystem
+from 3rd.realtime_training_system import IntegratedLearningSystem
 
 # 통합 시스템 초기화
 system = IntegratedLearningSystem(base_model="yolo11n.pt")
@@ -124,6 +137,26 @@ system.start(0)  # 0 = 웹캠
 
 # 비디오 파일로 학습
 system.start("video.mp4")
+```
+
+### 🔍 다중 레이어 객체 검출
+```python
+from multi_layer_detector import MultiLayerObjectDetector
+
+# 다중 레이어 검출기 생성
+detector = MultiLayerObjectDetector()
+
+# 이미지 분석 (4개 레이어 사용)
+results = detector.detect_multi_layer("image.jpg", visualize_layers=True)
+
+# GUI 애플리케이션 실행
+python multi_layer_app.py --gui
+
+# CLI 모드 실행
+python multi_layer_app.py --cli
+
+# 직접 이미지 처리
+python multi_layer_app.py -i path/to/image.jpg
 ```
 
 ## 📂 프로젝트 구조
@@ -142,9 +175,14 @@ yolo11_detector/
 │   ├── test_and_compare.py     # 성능 비교 도구
 │   └── advanced_yolo_tutorial.ipynb  # 고급 튜토리얼
 │
-├── 🔥 custom_training.py        # 파인튜닝 시스템
-├── 🔥 realtime_training_system.py  # 실시간 학습
-├── 📓 finetuning_tutorial.ipynb    # 파인튜닝 튜토리얼
+├── 📂 3rd/                      # Phase 3: 파인튜닝 시스템
+│   ├── custom_training.py       # 커스텀 학습
+│   ├── realtime_training_system.py  # 실시간 학습
+│   └── finetuning_tutorial.ipynb    # 튜토리얼
+│
+├── 🔥 multi_layer_detector.py  # 다중 레이어 검출기
+├── 🎯 multi_layer_app.py       # GUI/CLI 애플리케이션
+├── 🧪 test_multi_layer.py      # 테스트 스크립트
 │
 ├── 📂 Dev_md/                   # 개발 문서
 │   ├── DEVELOPMENT_LOG.md       # 개발 일지
@@ -170,10 +208,19 @@ yolo11_detector/
    - 도메인 특화
    - 성능 최적화
 
-3. **파인튜닝**: `finetuning_tutorial.ipynb`
+3. **파인튜닝**: `3rd/finetuning_tutorial.ipynb`
    - 커스텀 데이터셋 준비
    - Active Learning
    - 실시간 모니터링
+
+4. **다중 레이어 검출**: 실시간 실행
+   ```bash
+   # 테스트 스크립트 실행
+   python test_multi_layer.py --comprehensive
+   
+   # GUI 모드
+   python multi_layer_app.py --gui
+   ```
 
 ## 🚀 핵심 기능별 사용 시나리오
 
@@ -195,8 +242,18 @@ detector.process_video("traffic_cam.mp4")
 ### 시나리오 3: 커스텀 객체 학습
 ```python
 # 새로운 객체 클래스 추가 및 학습
+from 3rd.custom_training import AutoFineTuningPipeline
 pipeline = AutoFineTuningPipeline("custom_objects")
 pipeline.run_training(epochs=100)
+```
+
+### 시나리오 4: 다중 레이어 정밀 검출
+```bash
+# 이미지를 4개 레이어로 분석하여 최적 결과 도출
+python multi_layer_detector.py -i complex_image.jpg -v
+
+# GUI에서 대화형으로 사용
+python multi_layer_app.py --gui
 ```
 
 ## 📊 지원 모델
@@ -291,4 +348,4 @@ model.export(format='engine')
 
 **Last Updated**: 2025년 11월 21일  
 **Author**: aebonlee  
-**Version**: 2.0 (Fine-tuning Edition)
+**Version**: 3.0 (Multi-Layer Detection Edition)
