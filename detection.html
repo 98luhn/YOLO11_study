@@ -266,10 +266,13 @@
                     <i class="fas fa-home"></i> 홈
                 </a>
                 <a href="detection.html" class="nav-link active">
-                    <i class="fas fa-camera"></i> 구현
+                    <i class="fas fa-camera"></i> 탐지
                 </a>
                 <a href="index.html#about" class="nav-link">
                     <i class="fas fa-info-circle"></i> 소개
+                </a>
+                <a href="index.html#features" class="nav-link">
+                    <i class="fas fa-star"></i> 특징
                 </a>
                 <a href="index.html#docs" class="nav-link">
                     <i class="fas fa-book"></i> 문서
@@ -341,15 +344,29 @@
 
                 <div style="margin-top: 1rem;">
                     <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">
-                        <i class="fas fa-palette"></i> 탐지 박스 색상
+                        <i class="fas fa-palette"></i> 탐지 박스 색상 선택
                     </label>
                     <div class="color-palette">
-                        <div class="color-option active" style="background: #10b981;" data-color="#10b981"></div>
-                        <div class="color-option" style="background: #ef4444;" data-color="#ef4444"></div>
-                        <div class="color-option" style="background: #3b82f6;" data-color="#3b82f6"></div>
-                        <div class="color-option" style="background: #f59e0b;" data-color="#f59e0b"></div>
-                        <div class="color-option" style="background: #8b5cf6;" data-color="#8b5cf6"></div>
-                        <div class="color-option" style="background: #ec4899;" data-color="#ec4899"></div>
+                        <!-- 기본 색상 -->
+                        <div class="color-option active" style="background: #10b981;" data-color="#10b981" title="Forest Green"></div>
+                        <div class="color-option" style="background: #ef4444;" data-color="#ef4444" title="Red"></div>
+                        <div class="color-option" style="background: #3b82f6;" data-color="#3b82f6" title="Blue"></div>
+                        <div class="color-option" style="background: #f59e0b;" data-color="#f59e0b" title="Amber"></div>
+                        <div class="color-option" style="background: #8b5cf6;" data-color="#8b5cf6" title="Purple"></div>
+                        <div class="color-option" style="background: #ec4899;" data-color="#ec4899" title="Pink"></div>
+                        <!-- 추가 색상 -->
+                        <div class="color-option" style="background: #14b8a6;" data-color="#14b8a6" title="Teal"></div>
+                        <div class="color-option" style="background: #06b6d4;" data-color="#06b6d4" title="Cyan"></div>
+                        <div class="color-option" style="background: #84cc16;" data-color="#84cc16" title="Lime"></div>
+                        <div class="color-option" style="background: #f97316;" data-color="#f97316" title="Orange"></div>
+                        <div class="color-option" style="background: #6366f1;" data-color="#6366f1" title="Indigo"></div>
+                        <div class="color-option" style="background: #71717a;" data-color="#71717a" title="Gray"></div>
+                    </div>
+                    <div style="margin-top: 0.5rem; display: flex; align-items: center; gap: 1rem;">
+                        <label style="font-size: 0.875rem; color: var(--gray-600);">
+                            <input type="checkbox" id="randomColorMode" style="margin-right: 0.5rem;">
+                            각 객체마다 다른 색상 사용
+                        </label>
                     </div>
                 </div>
             </div>
@@ -439,6 +456,12 @@
         let currentImage = null;
         let detectionResults = [];
         let selectedColor = '#10b981';
+        let randomColorMode = false;
+        const availableColors = [
+            '#10b981', '#ef4444', '#3b82f6', '#f59e0b', 
+            '#8b5cf6', '#ec4899', '#14b8a6', '#06b6d4',
+            '#84cc16', '#f97316', '#6366f1', '#71717a'
+        ];
 
         // DOM Elements
         const imageUpload = document.getElementById('imageUpload');
@@ -576,11 +599,18 @@
             displayImage(currentImage);
             
             // Draw detection boxes
-            predictions.forEach(prediction => {
+            predictions.forEach((prediction, index) => {
                 const [x, y, width, height] = prediction.bbox;
                 
+                // Choose color based on mode
+                let boxColor = selectedColor;
+                if (randomColorMode) {
+                    // Use different color for each object
+                    boxColor = availableColors[index % availableColors.length];
+                }
+                
                 // Draw box
-                ctx.strokeStyle = selectedColor;
+                ctx.strokeStyle = boxColor;
                 ctx.lineWidth = 3;
                 ctx.strokeRect(x, y, width, height);
                 
@@ -589,7 +619,7 @@
                 ctx.font = 'bold 14px Poppins';
                 const textWidth = ctx.measureText(label).width;
                 
-                ctx.fillStyle = selectedColor;
+                ctx.fillStyle = boxColor;
                 ctx.fillRect(x, y - 25, textWidth + 10, 25);
                 
                 // Draw label text
@@ -620,10 +650,17 @@
                     </div>
                 `;
             } else {
-                resultsList.innerHTML = predictions.map((prediction, index) => `
+                resultsList.innerHTML = predictions.map((prediction, index) => {
+                    // Choose color based on mode
+                    let itemColor = selectedColor;
+                    if (randomColorMode) {
+                        itemColor = availableColors[index % availableColors.length];
+                    }
+                    
+                    return `
                     <div class="result-item">
                         <div class="result-class">
-                            <span style="background: ${selectedColor}; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600;">
+                            <span style="background: ${itemColor}; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 600;">
                                 ${index + 1}
                             </span>
                             <span>${translateClass(prediction.class)}</span>
@@ -632,7 +669,8 @@
                             ${Math.round(prediction.score * 100)}%
                         </div>
                     </div>
-                `).join('');
+                `;
+                }).join('');
             }
         }
 
@@ -769,9 +807,34 @@
                 // Redraw with new color if results exist
                 if (detectionResults.length > 0) {
                     drawDetections(detectionResults);
+                    displayResults(detectionResults, 0);
                 }
             });
         });
+        
+        // Random color mode checkbox
+        const randomColorCheckbox = document.getElementById('randomColorMode');
+        if (randomColorCheckbox) {
+            randomColorCheckbox.addEventListener('change', function() {
+                randomColorMode = this.checked;
+                
+                // Redraw with new color mode if results exist
+                if (detectionResults.length > 0) {
+                    drawDetections(detectionResults);
+                    displayResults(detectionResults);
+                }
+                
+                // Show/hide color palette based on mode
+                const colorPalette = document.querySelector('.color-palette');
+                if (randomColorMode) {
+                    colorPalette.style.opacity = '0.5';
+                    colorPalette.style.pointerEvents = 'none';
+                } else {
+                    colorPalette.style.opacity = '1';
+                    colorPalette.style.pointerEvents = 'auto';
+                }
+            });
+        }
 
         // Toast notification
         function showToast(message, type = 'info') {
