@@ -49,8 +49,6 @@ pip install -r requirements.txt
 python multi_layer_app.py --gui
 ```
 
-<img width="800" alt="GUI 모드" src="https://via.placeholder.com/800x400?text=Multi-Layer+Detection+GUI">
-
 ### 💻 CLI 모드
 
 명령줄에서 직접 실행:
